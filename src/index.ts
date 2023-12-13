@@ -11,10 +11,8 @@ app.use(express.json());
 const PORT = config.get<number>("port");
 
 app.listen(PORT, async () => {
-  logger.info(`Serving is listening at http://127.0.0.1:${PORT}`);
-
-  // await connectDB();
-
   userRoutes(app);
   tweetRoutes(app);
+
+  logger.info(`Serving is listening at http://127.0.0.1:${PORT}`);
 });
