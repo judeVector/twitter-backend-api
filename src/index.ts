@@ -14,5 +14,5 @@ app.listen(PORT, async () => {
   userRoutes(app);
   tweetRoutes(app);
 
-  logger.info(`Serving is listening at http://127.0.0.1:${PORT}`);
+  logger.info(`Server is listening at http://127.0.0.1:${PORT}`);
 });

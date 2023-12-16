@@ -13,12 +13,28 @@ export const getUsers = async (req: Request, res: Response) => {
   }
 };
 
+// { select: { id: true, name: true, image: true } }
+
+// const users = await prisma.user.findMany({
+//   // Returns all user fields
+//   include: {
+//     posts: {
+//       select: {
+//         title: true,
+//       },
+//     },
+//   },
+// });
+
 // Get user by id
 export const getUserById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+    const user = await prisma.user.findUnique({
+      where: { id: Number(id) },
+      include: { tweets: true },
+    });
 
     if (!user) {
       res.status(404).json({ error: `User with id: ${id} not found` });

@@ -6,7 +6,18 @@ const prisma = new PrismaClient();
 // Get all Tweets
 export const getTweets = async (req: Request, res: Response) => {
   try {
-    const allTweets = await prisma.tweet.findMany();
+    const allTweets = await prisma.tweet.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+            image: true,
+          },
+        },
+      },
+    });
     res.status(200).json({ tweets: allTweets });
   } catch (error) {
     res.status(500).json({ error: error });
@@ -18,12 +29,18 @@ export const getTweetsById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const tweet = await prisma.tweet.findUnique({ where: { id: Number(id) } });
+    const tweet = await prisma.tweet.findUnique({
+      where: { id: Number(id) },
+      include: { user: true },
+    });
 
     if (!tweet) {
       res.status(404).json({ error: `User with id: ${id} not found` });
     } else {
-      const tweets = await prisma.tweet.findUnique({ where: { id: Number(id) } });
+      const tweets = await prisma.tweet.findUnique({
+        where: { id: Number(id) },
+        include: { user: true },
+      });
       res.status(200).json(tweets);
     }
   } catch (error) {
