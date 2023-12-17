@@ -1,13 +1,13 @@
-import { Express, Request, Response } from "express";
+import { Express } from "express";
 import { createTweet, deleteTweet, getTweets, getTweetsById } from "../controller/tweet.controller";
 import config from "config";
 
 const tweetRoutes = (app: Express) => {
   const apiVersion = config.get<string>("apiVersion");
-  app.get(`${apiVersion}/tweets`, getTweets);
-  app.get(`${apiVersion}/tweets/:id`, getTweetsById);
-  app.post(`${apiVersion}/tweets`, createTweet);
-  app.delete(`${apiVersion}/tweets/:id`, deleteTweet);
+  app.get(`${apiVersion}/tweet`, getTweets);
+  app.get(`${apiVersion}/tweet/:id`, getTweetsById);
+  app.post(`${apiVersion}/tweet`, createTweet);
+  app.delete(`${apiVersion}/tweet/:id`, deleteTweet);
 };
 
 export default tweetRoutes;
