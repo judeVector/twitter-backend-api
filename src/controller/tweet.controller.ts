@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
@@ -49,24 +50,22 @@ export const getTweetsById = async (req: Request, res: Response) => {
 };
 
 // Create a new Tweet
-export const createTweet = async (req: Request, res: Response) => {
+export const createTweet = async (req: any, res: any) => {
   try {
-    const { content, image, userId } = req.body;
+    const { content, image } = req.body;
+    const user = req.user;
 
-    if (!userId) {
-      res.status(404).json({ error: "A tweet can only be created with a user, add a userId" });
-    } else {
-      const result = await prisma.tweet.create({
-        data: {
-          content,
-          image,
-          userId,
-        },
-      });
-      res.status(201).json({ tweet: result });
-    }
+    const result = await prisma.tweet.create({
+      data: {
+        content,
+        image,
+        userId: user.id,
+      },
+    });
+
+    res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: "Username and email should be unique" });
   }
 };
 

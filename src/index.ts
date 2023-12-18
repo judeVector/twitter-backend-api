@@ -4,10 +4,12 @@ import logger from "./utils/logger";
 import userRoutes from "./routes/user.routes";
 import tweetRoutes from "./routes/tweet.routes";
 import authRoutes from "./routes/auth.routes";
+import { authenticateToken } from "./middleware/authMidlleware";
 
 const app = express();
 
 app.use(express.json());
+app.use(authenticateToken);
 
 const PORT = config.get<number>("port");
 
