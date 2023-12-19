@@ -4,14 +4,16 @@ import logger from "./utils/logger";
 import userRoutes from "./routes/user.routes";
 import tweetRoutes from "./routes/tweet.routes";
 import authRoutes from "./routes/auth.routes";
-import { authenticateToken } from "./middleware/authMidlleware";
+import { apiAuthMiddleware } from "./middleware/apiAuthMiddleware";
 
 const app = express();
 
 app.use(express.json());
-app.use(authenticateToken);
 
 const PORT = config.get<number>("port");
+
+// Use the auth middleware globally, except for auth routes
+app.use(apiAuthMiddleware);
 
 app.listen(PORT, async () => {
   userRoutes(app);

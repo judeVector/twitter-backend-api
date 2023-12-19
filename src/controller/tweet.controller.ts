@@ -38,12 +38,9 @@ export const getTweetsById = async (req: Request, res: Response) => {
     if (!tweet) {
       res.status(404).json({ error: `User with id: ${id} not found` });
     } else {
-      const tweets = await prisma.tweet.findUnique({
-        where: { id: Number(id) },
-        include: { user: true },
-      });
-      res.status(200).json(tweets);
+      res.status(200).json(tweet);
     }
+    console.log(tweet);
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -62,8 +59,7 @@ export const createTweet = async (req: any, res: any) => {
         userId: user.id,
       },
     });
-
-    res.status(200).json(result);
+    res.status(200).json({ result: result });
   } catch (error) {
     res.status(500).json({ error: "Username and email should be unique" });
   }
@@ -74,7 +70,7 @@ export const deleteTweet = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const tweet = await prisma.user.findUnique({ where: { id: Number(id) } });
+    const tweet = await prisma.tweet.findUnique({ where: { id: Number(id) } });
 
     if (!tweet) {
       res.status(404).json({ error: `Tweet with id: ${id} does not exist!` });
@@ -82,6 +78,7 @@ export const deleteTweet = async (req: Request, res: Response) => {
       await prisma.tweet.delete({ where: { id: Number(id) } });
       res.status(200).json({ message: "Tweet deleted successfully" });
     }
+    console.log(tweet);
   } catch (error) {
     res.status(500).json({ error: error });
   }
