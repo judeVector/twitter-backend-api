@@ -3,22 +3,35 @@ import jwt from "jsonwebtoken";
 import { PrismaClient, User } from "@prisma/client";
 
 const prisma = new PrismaClient();
+
+// Secret key for JWT token verification
 const JWT_SECRET = "SUPER SECRET";
 
+// Extending Express Request type to include a 'user' property for authenticated users
 type AuthRequest = Request & { user?: User };
 
+/**
+ * Middleware function for authenticating requests using JWT tokens.
+ *
+ * @param req - Express request object extended with 'user' property.
+ * @param res - Express response object.
+ * @param next - Express next function to pass control to the next middleware.
+ */
 export const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
+    // Extracting JWT token from the Authorization header
     const authHeader = req.headers["authorization"];
     const jwtToken = authHeader?.split(" ")[1];
-    console.log(jwtToken);
 
+    // Checking if the JWT token is present
     if (!jwtToken) {
-      return res.sendStatus(401);
+      return res.status(401).json({ status: "Unauthorized" });
     }
 
-    // Decoding the jwt token
+    // Decoding the JWT token
     const payload = jwt.verify(jwtToken, JWT_SECRET) as { tokenId: number };
+
+    // Retrieving the token from the database along with associated user
     const dbToken = await prisma.token.findUnique({
       where: { id: payload.tokenId },
       include: {
@@ -26,14 +39,20 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
       },
     });
 
+    console.log(dbToken);
+
+    // Checking if the token is valid and not expired
     if (!dbToken || dbToken.expiration < new Date()) {
       return res.status(401).json({ error: "API token expired" });
     }
 
+    // Assigning the user object to the 'user' property in the request
     req.user = dbToken.user;
   } catch (error) {
-    return res.sendStatus(401);
+    // Handling errors, typically caused by token verification failure
+    return res.status(401).json({ status: "Unauthorized" });
   }
 
+  // Passing control to the next middleware
   next();
 };
