@@ -5,7 +5,7 @@ import { PrismaClient, User } from "@prisma/client";
 const prisma = new PrismaClient();
 
 // Secret key for JWT token verification
-const JWT_SECRET = "SUPER SECRET";
+const JWT_SECRET = process.env.JWT_SECRET || "default_secret";
 
 // Extending Express Request type to include a 'user' property for authenticated users
 type AuthRequest = Request & { user?: User };
@@ -29,7 +29,9 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
     }
 
     // Decoding the JWT token
-    const payload = jwt.verify(jwtToken, JWT_SECRET) as { tokenId: number };
+    const payload = jwt.verify(jwtToken, JWT_SECRET, { algorithms: ["HS256"] }) as {
+      tokenId: number;
+    };
 
     // Retrieving the token from the database along with associated user
     const dbToken = await prisma.token.findUnique({
@@ -49,10 +51,14 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
     // Assigning the user object to the 'user' property in the request
     req.user = dbToken.user;
   } catch (error) {
-    // Handling errors, typically caused by token verification failure
-    return res.status(401).json({ status: "Unauthorized" });
+    // Handle errors, typically caused by token verification failure
+    console.error("Token verification error:", error);
+    return res.status(401).json({ error: "Invalid token" });
+  } finally {
+    // Ensure proper Prisma client disconnection
+    await prisma.$disconnect();
   }
 
-  // Passing control to the next middleware
+  // Pass control to the next middleware
   next();
 };

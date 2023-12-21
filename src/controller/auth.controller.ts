@@ -4,13 +4,14 @@ import { PrismaClient } from "@prisma/client";
 import config from "config";
 import jwt from "jsonwebtoken";
 
-// Initializing Prisma client for database interactions
 const prisma = new PrismaClient();
 
 // Retrieving configuration values
 const EMAIL_TOKEN_EXPIRATION_MS = config.get<string>("EMAIL_TOKEN_EXPIRATION_MS");
 const AUTHENTICATION_EXPIRATION_HOURS = config.get<string>("AUTHENTICATION_EXPIRATION_HOURS");
-const JWT_SECRET = "SUPER SECRET";
+
+// Secret key for JWT token verification
+const JWT_SECRET = process.env.JWT_SECRET || "default_secret";
 
 // Function to generate a random 8-digit number as the email token
 const generateEmailToken = (): string => {
@@ -69,7 +70,6 @@ export const login = async (req: Request, res: Response) => {
 
     res.status(200).json({ message: "Token created successfully" });
   } catch (error) {
-    // Handling errors and sending a 500 status response
     res.status(500).json({ error: error });
   }
 };
@@ -142,7 +142,6 @@ export const authenticate = async (req: Request, res: Response) => {
 
     res.status(200).json({ authToken: authToken });
   } catch (error) {
-    // Handling errors and sending a 500 status response
     res.status(500).json({ error: error });
   }
 };
