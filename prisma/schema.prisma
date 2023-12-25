@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -28,7 +28,7 @@ model User {
 }
 
 model Tweet {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -37,13 +37,13 @@ model Tweet {
 
   impression Int @default(0)
 
-  userId Int
+  userId String
   user User @relation(fields: [userId], references: [id])
   
 }
 
 model Token {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -53,7 +53,7 @@ model Token {
   valid Boolean @default(true)
   expiration DateTime
 
-  userId Int
+  userId String
   user User @relation(fields: [userId], references: [id])
 
 }

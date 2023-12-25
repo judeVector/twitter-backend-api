@@ -43,7 +43,7 @@ export const getTweetsById = async (req: Request, res: Response) => {
 
     // Fetching a tweet by its ID from the database, including user details
     const tweet = await prisma.tweet.findUnique({
-      where: { id: Number(id) },
+      where: { id: String(id) },
       include: { user: true },
     });
 
@@ -94,14 +94,14 @@ export const deleteTweet = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     // Finding a tweet by ID in the database
-    const tweet = await prisma.tweet.findUnique({ where: { id: Number(id) } });
+    const tweet = await prisma.tweet.findUnique({ where: { id: String(id) } });
 
     // Handling not found scenario
     if (!tweet) {
       res.status(404).json({ error: `Tweet with id: ${id} does not exist!` });
     } else {
       // Deleting a tweet from the database
-      await prisma.tweet.delete({ where: { id: Number(id) } });
+      await prisma.tweet.delete({ where: { id: String(id) } });
       res.status(200).json({ message: "Tweet deleted successfully" });
     }
   } catch (error) {

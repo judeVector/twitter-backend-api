@@ -1,7 +1,14 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { createUserSchema } from "../utils/validation";
 
+// Initialize Prisma client
 const prisma = new PrismaClient();
+
+// Utility function to send standardized error responses
+const sendError = (res: Response, status: number, message: string) => {
+  res.status(status).json({ error: message });
+};
 
 /**
  * Get all users from the database.
@@ -15,7 +22,8 @@ export const getUsers = async (req: Request, res: Response) => {
     const allUsers = await prisma.user.findMany();
     res.status(200).json({ data: allUsers });
   } catch (error) {
-    res.status(500).json({ error: error });
+    // Handling errors and sending a standardized error response
+    sendError(res, 500, (error as Error).message || "Internal Server Error");
   }
 };
 
@@ -31,18 +39,19 @@ export const getUserById = async (req: Request, res: Response) => {
 
     // Fetching a user by their ID from the database
     const user = await prisma.user.findUnique({
-      where: { id: Number(id) },
+      where: { id: String(id) },
       include: { tweets: true },
     });
 
     // Handling not found scenario
     if (!user) {
-      res.status(404).json({ error: `User with id: ${id} not found` });
+      sendError(res, 404, `User with id: ${id} not found`);
     } else {
       res.status(200).json({ data: user });
     }
-  } catch (error) {
-    res.status(500).json({ error: error });
+  } catch (error: any) {
+    // Handling errors and sending a standardized error response
+    sendError(res, 500, (error as Error).message || "Internal Server Error");
   }
 };
 
@@ -54,26 +63,34 @@ export const getUserById = async (req: Request, res: Response) => {
  */
 export const createUser = async (req: Request, res: Response) => {
   try {
+    const { error } = createUserSchema.validate(req.body);
+
+    if (error) {
+      // If validation fails, send a 400 Bad Request response with the validation error
+      sendError(res, 400, error.details[0].message);
+      return;
+    }
+
     const { email, name, username } = req.body;
 
-    // Validating input data
-    if (!email || !username || !name) {
-      res.status(404).json({ error: { message: "Invalid email, name, or username provided" } });
-    } else {
-      // Creating a new user in the database
-      const user = await prisma.user.create({
-        data: {
-          email,
-          name,
-          username,
-          bio: "Hello, I'm new on Twitter",
-        },
-      });
-      res.status(201).json({ user: user });
-    }
+    // Creating a new user in the database
+    const user = await prisma.user.create({
+      data: {
+        email,
+        name,
+        username,
+        bio: "Hello, I'm new on Twitter",
+      },
+    });
+
+    res.status(201).json({ user: user });
   } catch (error) {
-    // Handling unique constraint violation errors and sending a 500 status response
-    res.status(500).json({ error: "Username and email should be unique" });
+    // Handling unique constraint violation errors and sending a standardized error response
+    sendError(
+      res,
+      500,
+      "This username or email is already in use. Please choose a different username or use a different email address."
+    );
   }
 };
 
@@ -90,12 +107,13 @@ export const updateUser = async (req: Request, res: Response) => {
   try {
     // Updating a user in the database
     const result = await prisma.user.update({
-      where: { id: Number(id) },
+      where: { id: String(id) },
       data: { bio, name, image },
     });
     res.status(200).json(result);
   } catch (error) {
-    res.status(400).json({ error: "Failed to update the user" });
+    // Handling errors and sending a standardized error response
+    sendError(res, 400, "Failed to update the user");
   }
 };
 
@@ -110,18 +128,24 @@ export const deleteUser = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     // Finding a user by ID in the database
-    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+    const user = await prisma.user.findUnique({ where: { id: String(id) } });
 
     // Handling not found scenario
     if (!user) {
-      res.status(404).json({ error: `User with id: ${id} does not exist!` });
+      sendError(res, 404, `User with id: ${id} does not exist!`);
     } else {
       // Deleting a user from the database
-      await prisma.user.delete({ where: { id: Number(id) } });
+      await prisma.user.delete({ where: { id: String(id) } });
       res.status(200).json({ message: "User deleted successfully" });
     }
-  } catch (error) {
-    // Handling errors and sending a 500 status response
-    res.status(500).json({ error: error });
+  } catch (error: any) {
+    // Handling errors and sending a standardized error response
+    sendError(res, 500, error.message || "Internal Server Error");
   }
+};
+
+// Close Prisma connection middleware
+export const closePrismaConnection = async (req: Request, res: Response, next: NextFunction) => {
+  await prisma.$disconnect();
+  next();
 };

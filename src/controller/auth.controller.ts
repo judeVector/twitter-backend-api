@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { sendEmailToken } from "../services/emailService";
 
 import config from "config";
 import jwt from "jsonwebtoken";
@@ -22,7 +23,7 @@ const generateEmailToken = (): string => {
 };
 
 // Function to generate JWT Authentication Token
-const generateJwtToken = (tokenId: Number): string => {
+const generateJwtToken = (tokenId: String): string => {
   const jwtPayload = { tokenId };
 
   return jwt.sign(jwtPayload, JWT_SECRET, {
@@ -65,6 +66,7 @@ export const login = async (req: Request, res: Response) => {
 
     // Logging the created token (for testing purposes)
     console.log(createdToken);
+    await sendEmailToken(email, emailToken);
 
     // send email token to users email (Not implemented here)
 
