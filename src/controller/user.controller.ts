@@ -102,13 +102,13 @@ export const createUser = async (req: Request, res: Response) => {
  */
 export const updateUser = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { bio, name, image } = req.body;
+  const { bio, name, image, username } = req.body;
 
   try {
     // Updating a user in the database
     const result = await prisma.user.update({
       where: { id: String(id) },
-      data: { bio, name, image },
+      data: { bio, name, image, username },
     });
     res.status(200).json(result);
   } catch (error) {

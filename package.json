@@ -5,7 +5,9 @@
   "author": "Jude Ndubuisi",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "start": "ts-node src/index.ts",
+    "build": "tsc"
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.478.0",
@@ -18,13 +20,17 @@
     "joi": "^17.11.0",
     "jsonwebtoken": "^9.0.2",
     "pino": "^8.16.2",
-    "pino-pretty": "^10.2.3"
+    "pino-pretty": "^10.2.3",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
     "@types/config": "^3.3.3",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20.10.3",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.6",
     "nodemon": "^3.0.2",
     "ts-node": "^10.9.1",
     "typescript": "^5.3.2"

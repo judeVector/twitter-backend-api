@@ -5,6 +5,7 @@ import userRoutes from "./routes/user.routes";
 import tweetRoutes from "./routes/tweet.routes";
 import authRoutes from "./routes/auth.routes";
 import { apiAuthMiddleware } from "./middleware/apiAuthMiddleware";
+import swaggerDocs from "./utils/swagger";
 
 const app = express();
 
@@ -19,6 +20,8 @@ app.listen(PORT, async () => {
   userRoutes(app);
   tweetRoutes(app);
   authRoutes(app);
+
+  swaggerDocs(app, PORT);
 
   logger.info(`Server is listening at http://127.0.0.1:${PORT}`);
 });

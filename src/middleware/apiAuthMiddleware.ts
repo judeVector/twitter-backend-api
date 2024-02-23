@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { authenticateToken } from "./authMiddleware";
 
 const AUTH_ROUTE_PREFIX = "/api/v1/auth";
+const DOCS_PREFIX = "/docs";
 
 /**
  * Middleware function for API authentication.
@@ -12,7 +13,7 @@ const AUTH_ROUTE_PREFIX = "/api/v1/auth";
  */
 export const apiAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
   // Check if the request path starts with "/api/v1/auth"
-  if (req.path.startsWith(AUTH_ROUTE_PREFIX)) {
+  if (req.path.startsWith(AUTH_ROUTE_PREFIX) || req.path.startsWith(DOCS_PREFIX)) {
     // Skip authentication middleware for auth routes
     return next();
   }
