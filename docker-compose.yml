@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+  twitterbackend:
+    container_name: twitterbackend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 1337:1337
