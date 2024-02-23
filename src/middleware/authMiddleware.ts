@@ -30,7 +30,7 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
 
     // Decoding the JWT token
     const payload = jwt.verify(jwtToken, JWT_SECRET, { algorithms: ["HS256"] }) as {
-      tokenId: string;
+      tokenId: number;
     };
 
     // Retrieving the token from the database along with associated user

@@ -39,7 +39,7 @@ export const getUserById = async (req: Request, res: Response) => {
 
     // Fetching a user by their ID from the database
     const user = await prisma.user.findUnique({
-      where: { id: String(id) },
+      where: { id: Number(id) },
       include: { tweets: true },
     });
 
@@ -107,7 +107,7 @@ export const updateUser = async (req: Request, res: Response) => {
   try {
     // Updating a user in the database
     const result = await prisma.user.update({
-      where: { id: String(id) },
+      where: { id: Number(id) },
       data: { bio, name, image, username },
     });
     res.status(200).json(result);
@@ -128,14 +128,14 @@ export const deleteUser = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     // Finding a user by ID in the database
-    const user = await prisma.user.findUnique({ where: { id: String(id) } });
+    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
 
     // Handling not found scenario
     if (!user) {
       sendError(res, 404, `User with id: ${id} does not exist!`);
     } else {
       // Deleting a user from the database
-      await prisma.user.delete({ where: { id: String(id) } });
+      await prisma.user.delete({ where: { id: Number(id) } });
       res.status(200).json({ message: "User deleted successfully" });
     }
   } catch (error: any) {

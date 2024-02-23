@@ -17,7 +17,7 @@ const PORT = config.get<number>("port");
 app.use(apiAuthMiddleware);
 
 app.get("/healthcheck", (req, res) => {
-  res.status(200).json({ status: "App is running......" });
+  res.status(200).json({ status: "OK" });
 });
 
 app.listen(PORT, async () => {
