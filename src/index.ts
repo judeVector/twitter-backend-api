@@ -16,6 +16,10 @@ const PORT = config.get<number>("port");
 // Use the auth middleware globally, except for auth routes
 app.use(apiAuthMiddleware);
 
+app.get("/healthcheck", (req, res) => {
+  res.status(200).json({ status: "OK" });
+});
+
 app.listen(PORT, async () => {
   userRoutes(app);
   tweetRoutes(app);
