@@ -23,7 +23,7 @@ const generateEmailToken = (): string => {
 };
 
 // Function to generate JWT Authentication Token
-const generateJwtToken = (tokenId: number): string => {
+const generateJwtToken = (tokenId: string): string => {
   const jwtPayload = { tokenId };
 
   return jwt.sign(jwtPayload, JWT_SECRET, {
