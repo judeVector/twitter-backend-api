@@ -3,12 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id String  @id @default(auto()) @map("_id") @db.ObjectId
+  id String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -25,7 +25,7 @@ model User {
 }
 
 model Tweet {
-  id String  @id @default(auto()) @map("_id") @db.ObjectId
+  id String  @id 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -34,7 +34,7 @@ model Tweet {
 
   impression Int @default(0)
 
-  userId String @db.ObjectId 
+  userId String 
   user User @relation(fields: [userId], references: [id])
   
 }
