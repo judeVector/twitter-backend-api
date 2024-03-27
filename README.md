@@ -1,6 +1,6 @@
 ﻿# Twitter Backend API
 
-Build the backbone of your social media platform with this Twitter Backend API. This API is powered by Node.js, ExpressJs and managed with Yarn, this API provides essential features for building a Twitter-like application,
+Build the backbone of your social media platform with this Twitter Backend API. This API is powered by Node.js, ExpressJs and managed with Yarn, this API provides essential features for building a Twitter-like application, with all the basic CRUD operations supported
 
 ## Features
 
